@@ -7,10 +7,10 @@
               <el-input v-model="loginForm.username"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input v-model="loginForm.password" type="password"></el-input>
+              <el-input v-model="loginForm.password" type="password"  @keyup.native.13="login"></el-input>
             </el-form-item>
             <el-form-item class="btns" v-if="btnShow">
-             <el-button type="primary" @click="login" @keyup.enter="login">登录</el-button>
+             <el-button type="primary" @click="login" >登录</el-button>
              <el-button type="info" @click="resetLogin">重置</el-button>
              <el-button type="info" @click="goRegister">去注册</el-button>
             </el-form-item>
@@ -25,10 +25,10 @@
               <el-input v-model="registerForm.password" type="password"></el-input>
             </el-form-item>
              <el-form-item label="确认密码" prop="password">
-              <el-input v-model="registerForm.checkPassword" type="password"></el-input>
+              <el-input v-model="registerForm.checkPassword" type="password" @keyup.native.13="register"></el-input>
             </el-form-item>
             <el-form-item class="btns" v-if="btnShow">
-             <el-button type="primary" @click="register" @keyup.enter="register">注册</el-button>
+             <el-button type="primary" @click="register" >注册</el-button>
              <el-button type="info" @click="resetRegister">重置</el-button>
              <el-button type="info" @click="goLogin">去登录</el-button>
             </el-form-item>
@@ -81,7 +81,10 @@ export default {
             type: 'error'
           })
         }
-        this.$message('登录成功')
+        this.$message({
+          message: '登录成功',
+          type: 'success'
+        })
         window.sessionStorage.setItem('token', res.token)
         this.$router.push('/home')
       })
