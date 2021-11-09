@@ -73,7 +73,7 @@ export default {
     login () {
       this.$refs.loginFormRef.validate(async (valid) => {
         if (!valid) return
-        const { data: res } = await this.$http.post('http://127.0.0.1:80/api/login', this.loginForm)
+        const { data: res } = await this.$http.post('api/login', this.loginForm)
         console.log(res)
         if (res.status !== 0) {
           return this.$message({
