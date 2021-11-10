@@ -21,15 +21,13 @@
         :auto-upload="true"
         :on-success="handleSueecss"
         ref="uploadImage"
+        class="upload"
         >
        <el-button size="small" type="primary">修改头像</el-button>
     </el-upload>
 </el-dialog>
       <!-- 弹出修改框 -->
         <el-dialog title="修改信息" :visible.sync="settingFormVisible">
-        <!-- 显示头像 -->
-          <!-- <el-image  class="modifyImage" style="width: 99.999975px; height: 99.999975px" :src="'http://127.0.0.1:80/api/publicImage/img/'+ myInfo.user_pic"></el-image> -->
-        <!-- 表单 -->
          <el-form :model="setInfo" :rules="modifyRules" ref="setInfoRef">
              <el-form-item label="昵称" :label-width="formLabelWidth" prop="nickname">
               <el-input v-model="setInfo.nickname" autocomplete="off"></el-input>
@@ -38,8 +36,29 @@
               <el-input v-model="setInfo.email" autocomplete="off"></el-input>
              </el-form-item>
          </el-form>
+        <!-- 修改密码对话框 -->
+      <el-dialog
+      width="30%"
+      title="修改密码"
+      :visible.sync="passwordVisible"
+      append-to-body>
+      <el-form :model="passwordForm" :rules="passwordFormRules" ref="passwordFormRef" label-width="100px" class="demo-ruleForm">
+       <el-form-item label="新密码" prop="newPassword">
+        <el-input v-model="passwordForm.newPassword" type="password"></el-input>
+       </el-form-item>
+       <el-form-item label="确认密码" prop="checkPassword">
+        <el-input v-model="passwordForm.checkPassword" type="password"></el-input>
+       </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+    <el-button @click="passwordVisible = false">取 消</el-button>
+    <el-button type="primary" @click="modifyPassword">确 定</el-button>
+  </div>
+    </el-dialog>
 
   <div slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="passwordVisible = true">修改密码</el-button>
     <el-button @click="settingFormVisible = false">取 消</el-button>
     <el-button type="primary" @click="modify">确 定</el-button>
   </div>
@@ -63,6 +82,7 @@ export default {
       },
       settingFormVisible: false,
       avatarDialogVisible: false,
+      passwordVisible: false,
       formLabelWidth: '120px', // 弹出框标签的长度
       modifyRules: {
         nickname: [
@@ -72,6 +92,20 @@ export default {
         email: [
           { message: '请输入邮箱地址', trigger: 'blur' },
           { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+        ]
+      },
+      passwordForm: {
+        newPassword: '',
+        checkPassword: ''
+      },
+      passwordFormRules: {
+        newPassword: [
+          { message: '请输入新密码', trigger: 'blur' },
+          { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
+        ],
+        checkPassword: [
+          { message: '确认新密码', trigger: 'blur' },
+          { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
         ]
       }
     }
@@ -100,7 +134,9 @@ export default {
       this.ifChanged = true
       this.$emit('changeInfo', this.ifChanged)
       this.avatarDialogVisible = false
+      this.$refs.uploadImage.clearFiles()
     },
+    // 修改信息
     modify () {
       this.$refs.setInfoRef.validate(async valid => {
         if (!valid) {
@@ -120,9 +156,31 @@ export default {
           })
         }
         this.settingFormVisible = false
-        this.$refs.uploadImage.clearFiles()
         this.ifChanged = true
         this.$emit('changeInfo', this.ifChanged)
+      })
+    },
+    // 修改密码
+    modifyPassword () {
+      this.$refs.passwordFormRef.validate(async valid => {
+        if (!valid) {
+          return this.$message.error('请正确填写表单项')
+        }
+        if (this.passwordForm.newPassword !== this.passwordForm.checkPassword) {
+          return this.$message.error('两次密码不一致')
+        }
+        const { data: res } = await this.$http.post('my/modifyPassword', { newPassword: this.passwordForm.newPassword })
+        if (res.status !== 0) {
+          return this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+        this.$message({
+          message: res.message,
+          type: 'success'
+        })
+        this.passwordVisible = false
       })
     }
   },
@@ -168,6 +226,14 @@ export default {
         width: 300px;
         margin: 0 auto;
         display: block;
+        margin-bottom: 20px;
+    }
+    // .avatarDialog {
+    //   position: absolute;
+    // }
+    .upload {
+      display: flex;
+      justify-content: flex-end;
     }
 
 </style>
