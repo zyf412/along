@@ -46,7 +46,7 @@ export default {
       btnShow: true,
       registerShow: false,
       loginForm: {
-        username: 'zyf',
+        username: 'test',
         password: '123456'
       },
       registerForm: {
