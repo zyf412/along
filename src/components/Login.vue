@@ -46,7 +46,7 @@ export default {
       btnShow: true,
       registerShow: false,
       loginForm: {
-        username: 'zyf',
+        username: 'test',
         password: '123456'
       },
       registerForm: {
@@ -106,7 +106,7 @@ export default {
         if (this.registerForm.password !== this.registerForm.checkPassword) {
           return this.$message({ message: '两次密码不一致', type: 'error' })
         }
-        const { data: res } = await this.$http.post('http://127.0.0.1:80/api/register', this.registerForm)
+        const { data: res } = await this.$http.post('api/register', this.registerForm)
         if (res.status !== 0) {
           return this.$message({
             message: res.message,

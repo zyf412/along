@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <Header :myInfo = userInfo :token = mytoken @changeInfo = undateInfo></Header>
-
   </div>
 </template>
 
